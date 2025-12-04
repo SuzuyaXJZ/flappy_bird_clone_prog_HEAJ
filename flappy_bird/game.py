@@ -146,6 +146,8 @@ while not(ready):
     targetRectInput = textSurface.get_rect(center=(inputRectInside.center))
     screen.blit(textSurface, targetRectInput)
     
+    if activeError:
+        screen.blit(errorMessage, errorRect)
 
     for event in pygame.event.get():
         key_pressed = pygame.key.get_pressed()
@@ -382,6 +384,10 @@ while True:
                 image = pygame.Surface.convert_alpha(image)
                 listSprite.append(image)
 
+
+            listSpriteIG = listSprite
+            counterRot = 0
+
             pointRect = pygame.Rect(listPipe[0][0].left, listPipe[0][0].bottom, lengthPipe, PxBtwPipe)
             
             listSpritePipe = []
@@ -436,7 +442,7 @@ while True:
 
 
             # Affichage du sprite player
-                screen.blit(listSprite[animationState], characterRect)
+                screen.blit(listSpriteIG[animationState], characterRect)
 
 
                 for i in range(len(listPipe)):
@@ -473,7 +479,7 @@ while True:
 
                 if damage == len(listLifeRect) and not(alreadyInserted):
                     data = [username, score]
-                    screen.blit(listSprite[2], characterRect)
+                    screen.blit(listSpriteIG[2], characterRect)
 
                     for i in range(len(leaderboard)):
                         if score > leaderboard[i][1]:
@@ -499,7 +505,7 @@ while True:
                     for i in range(len(listParallax)):
                         screen.blit(listParallax[i], (listRectParallax[i]))
                         screen.blit(listParallax[i], (listRectParallax[i].left + lengthScreen, listRectParallax[i].y))
-                    screen.blit(listSprite[2], characterRect)
+                    screen.blit(listSpriteIG[2], characterRect)
                     for i in range(len(listPipe)):
                         screen.blit(listSpritePipe[i][0], listPipe[i][0])
                         screen.blit(listSpritePipe[i][1], listPipe[i][1])
@@ -646,7 +652,7 @@ while True:
                         for i in range(len(listParallax)):
                             screen.blit(listParallax[i], (listRectParallax[i]))
                             screen.blit(listParallax[i], (listRectParallax[i].left + lengthScreen, listRectParallax[i].y))
-                        screen.blit(listSprite[2], characterRect)
+                        screen.blit(listSpriteIG[2], characterRect)
                         for i in range(len(listPipe)):
                             screen.blit(listSpritePipe[i][0], listPipe[i][0])
                             screen.blit(listSpritePipe[i][1], listPipe[i][1])
@@ -668,7 +674,7 @@ while True:
                         for i in range(len(listParallax)):
                             screen.blit(listParallax[i], (listRectParallax[i]))
                             screen.blit(listParallax[i], (listRectParallax[i].left + lengthScreen, listRectParallax[i].y))
-                        screen.blit(listSprite[2], characterRect)
+                        screen.blit(listSpriteIG[2], characterRect)
                         for i in range(len(listPipe)):
                             screen.blit(listSpritePipe[i][0], listPipe[i][0])
                             screen.blit(listSpritePipe[i][1], listPipe[i][1])
@@ -694,12 +700,22 @@ while True:
                         characterRect.y -= maxSpeed
                         animationState = 1
                         speed = 1
+                        
+                        if counterRot < 10:
+                            for i in range(len(listSprite)):
+                                listSpriteIG[i] = pygame.transform.rotate(pygame.transform.scale(listSprite[i], CHARACTER_DIMENSION), counterRot)
+                            counterRot += 1
+
                         if characterRect.colliderect(upperLimit):
                             characterRect.top = upperLimit.bottom
                     else: 
                         characterRect.y += speed
                         animationState = 0
                         speedCount += 1
+                        if counterRot > -10:
+                            for i in range(len(listSprite)):
+                                listSpriteIG[i] = pygame.transform.rotate(pygame.transform.scale(listSprite[i], CHARACTER_DIMENSION), counterRot)
+                            counterRot -= 1
                         if (speed < maxSpeed) and speedCount % 5 == 0:
                             speed += actualDownSpeed
                             speedCount = 0
@@ -741,9 +757,6 @@ while True:
 
                     counterAnim += 1
 
-                # angle += 1
-                # # changer cette partie pour permettre une rotation correcte
-                # listSprite[0] = pygame.transform.rotate(pygame.transform.scale(listSprite[0], CHARACTER_DIMENSION), +10)
                 pygame.display.flip()
                 pygame.time.Clock().tick(fps)
                 # Si selector == 2, afficher le LB
@@ -956,5 +969,5 @@ while True:
 
 
         case _:
-            print(f"DEBUG: ERROR SOMEWHERE, CASE SHOULD NOT TAKE THIS VALUE")
+            print(f"DEBUG: ERROR SOMEWHERE, SELECTOR SHOULD NOT TAKE THIS VALUE")
 
