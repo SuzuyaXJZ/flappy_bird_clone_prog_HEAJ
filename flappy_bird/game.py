@@ -385,7 +385,11 @@ while True:
                 listSprite.append(image)
 
 
-            listSpriteIG = listSprite
+            # On utilise .copy() ici pour que listSpriteIG ne contiennent pas des références vers les valeurs de listSprite mais 
+            # soit bel et bien une copie de la liste originale.
+            # Sans ça, à chaque modification apportée à une valeurs de listSpriteIG, les valeurs de listSprite sont modifiées également
+            listSpriteIG = listSprite.copy()
+
             counterRot = 0
 
             pointRect = pygame.Rect(listPipe[0][0].left, listPipe[0][0].bottom, lengthPipe, PxBtwPipe)
@@ -442,8 +446,8 @@ while True:
 
 
             # Affichage du sprite player
-                screen.blit(listSpriteIG[animationState], characterRect)
-
+                screen.blit(listSpriteIG[animationState], listSpriteIG[animationState].get_rect(center=(characterRect.center)))
+                print(listSpriteIG[animationState].get_size())
 
                 for i in range(len(listPipe)):
                     screen.blit(listSpritePipe[i][0], listPipe[i][0])
@@ -703,7 +707,7 @@ while True:
                         
                         if counterRot < 10:
                             for i in range(len(listSprite)):
-                                listSpriteIG[i] = pygame.transform.rotate(pygame.transform.scale(listSprite[i], CHARACTER_DIMENSION), counterRot)
+                                listSpriteIG[i] = pygame.transform.rotate(listSprite[i], counterRot)
                             counterRot += 1
 
                         if characterRect.colliderect(upperLimit):
@@ -714,7 +718,7 @@ while True:
                         speedCount += 1
                         if counterRot > -10:
                             for i in range(len(listSprite)):
-                                listSpriteIG[i] = pygame.transform.rotate(pygame.transform.scale(listSprite[i], CHARACTER_DIMENSION), counterRot)
+                                listSpriteIG[i] = pygame.transform.rotate(listSprite[i], counterRot)
                             counterRot -= 1
                         if (speed < maxSpeed) and speedCount % 5 == 0:
                             speed += actualDownSpeed
