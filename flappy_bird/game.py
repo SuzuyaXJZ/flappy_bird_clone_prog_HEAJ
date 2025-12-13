@@ -154,7 +154,7 @@ while not(ready):
         if event.type == pygame.QUIT:
             pygame.quit()
 
-        if key_pressed[pygame.K_RETURN]:
+        if key_pressed[pygame.K_RETURN] or key_pressed[pygame.K_KP_ENTER]:
             if len(username) >= 3 and username[0].isalpha() and len(username) <= 11:
                 error = ""
                 ready = True
@@ -166,7 +166,7 @@ while not(ready):
                 activeError = True
 
 
-        if event.type == pygame.KEYDOWN and not(key_pressed[pygame.K_RETURN]):
+        if event.type == pygame.KEYDOWN and not(key_pressed[pygame.K_RETURN] or key_pressed[pygame.K_KP_ENTER]):
             if key_pressed[pygame.K_BACKSPACE]:
                 username = username[:-1]
             else:
@@ -204,7 +204,7 @@ while not(readyAge):
         if event.type == pygame.QUIT:
             pygame.quit()
 
-        if key_pressed[pygame.K_RETURN]:
+        if key_pressed[pygame.K_RETURN] or key_pressed[pygame.K_KP_ENTER]:
             try:
                 age_for_diff = int(age)
                 if age_for_diff <= 0:
@@ -238,7 +238,7 @@ while not(readyAge):
                 activeError = True
 
 
-        if event.type == pygame.KEYDOWN and not(key_pressed[pygame.K_RETURN]):
+        if event.type == pygame.KEYDOWN and not(key_pressed[pygame.K_RETURN] or key_pressed[pygame.K_KP_ENTER]):
             if key_pressed[pygame.K_BACKSPACE]:
                 age = age[:-1]
             else:
@@ -250,9 +250,6 @@ while not(readyAge):
 
 
 inMenu = False
-inGame = False
-inColorSelect = False
-inLB = False
 
 while True:
 
@@ -305,6 +302,9 @@ while True:
                         elif LBRectInside.collidepoint(mousePos):
                             selector = 2
                             inMenu = False
+                        elif colorRectInside.collidepoint(mousePos):
+                            selector = 3
+                            inMenu = False
 
 
                 pygame.time.Clock().tick(fps)
@@ -353,7 +353,6 @@ while True:
             lastGameCoinNum = 0
             baseAngle = 0
             angle = baseAngle
-            print(lengthPipe, heightPipe)
 
             
             
@@ -447,7 +446,6 @@ while True:
 
             # Affichage du sprite player
                 screen.blit(listSpriteIG[animationState], listSpriteIG[animationState].get_rect(center=(characterRect.center)))
-                print(listSpriteIG[animationState].get_size())
 
                 for i in range(len(listPipe)):
                     screen.blit(listSpritePipe[i][0], listPipe[i][0])
@@ -837,7 +835,39 @@ while True:
             
         # Si selector == 3, sélection des couleurs pour l'oiseau
         case 3:
-            '''TODO'''
+            inColorSelect = True
+            while inColorSelect:
+                screen.fill(black)
+                mousePos = pygame.mouse.get_pos()
+                screen.fill(black)
+                pygame.draw.rect(screen, brighterGrey, closingSign)
+                if closingSignInside.collidepoint(mousePos):
+                    pygame.draw.rect(screen, red, closingSignInside)
+                    XSign = bigFont.render("X", True, white)
+                    
+                else: 
+                    pygame.draw.rect(screen, black, closingSignInside)
+                    XSign = bigFont.render("X", True, brighterGrey)       
+
+                XSignRect = XSign.get_rect(center=(closingSign.centerx + 2, closingSign.centery + 5))
+                screen.blit(XSign, XSignRect)
+                pygame.draw.line(screen, white, (0, heightScreen * (10/100)), (lengthScreen, heightScreen * (10/100)), linesThickness)
+
+
+                csHeader = mediumFont.render("Select your color", True, white)
+                csHeaderRect = csHeader.get_rect(center=(lengthScreen//2, (heightScreen*10/100)//2))    
+                screen.blit(csHeader, csHeaderRect)
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if closingSignInside.collidepoint(mousePos):
+                            selector = 0
+                            inColorSelect = False
+                
+                pygame.time.Clock().tick(fps)
+                pygame.display.flip()
 
         # Si selector == 4, section bonus
         case 4:      
